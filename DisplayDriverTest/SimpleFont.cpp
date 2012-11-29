@@ -6,8 +6,24 @@
  */
 
 #include "SimpleFont.h"
+#include "avr/io.h"
+#include "avr/pgmspace.h"
 
 using namespace Led;
+
+// Const bitmaps
+static uint32_t fontArray[] /*PROGMEM*/ = {
+	0x06b9d6, // '0'
+	0x026227, // '1'
+	0x0e178f, // '2'
+	0x0f171f, // '3'
+	0x099f11, // '4'
+	0x0f8e1f, // '5'
+	0x078f9f, // '6'
+	0x0f1224, // '7'
+	0x0f969f, // '8'
+	0x0f9f11  // '9'
+};
 
 SimpleFont::SimpleFont(Buffer* buff) : Font(buff) {
 	_kerning = 1;

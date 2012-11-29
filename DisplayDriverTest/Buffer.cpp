@@ -92,42 +92,54 @@ bool Buffer::getBit(int x, int y) {
 void Buffer::set8Bit(int x, int y, uint8_t data, BlendMode m) {
 	// TODO implement!
 
-	// Get byte pointer that contains the leftmost bit
-	uint8_t* bitBytePtr = _buff + (_pitchBytes * y) + x/8;
-
-
-
 }
 
 uint8_t Buffer::get8Bit(int x, int y) {
 
+	uint8_t bits1, bits2;
+
+	// Calculate the index information into the byte array
+	uint8_t byteIndex = x / 8;
+	uint8_t byteRem = x % 8;
+
+	// Calculate the mask for bits beyond display width
+	uint8_t maskBits = 0xFF << (8 - _width % 8);
+
 	// Get byte that contains the most significant part of the 8-bits
-	uint8_t* bitsByte1 = _buff + (_pitchBytes * y) + x/8;
+	uint8_t* bitsByte1 = _buff + (_pitchBytes * y) + byteIndex;
 
-	// Get the width remainder
-	uint8_t rem = (x % 8);
-
-	// Shift the byte to extract the desired bits
-	uint8_t bits = (*bitsByte1 << rem);
+	// Get 1st Byte containing bits
+	bits1 = *bitsByte1;
 
 	// Mask out bits beyond width of display
-	// TODO
+	if (byteIndex == _pitchBytes){
+		bits1 &= maskBits;
+	}
 
-	// If we data from the following byte as well
-	if (rem != 0 && (x/8 < _pitchBytes)) {
+	// Shift the bits by the remainder to realign left
+	bits1 <<= byteRem;
+
+	// If we need data from the following byte as well
+	if (byteRem > 0 && (byteIndex < _pitchBytes)) {
 
 		// Get byte that contains the least significant part of the 8 bits
 		uint8_t* bitsByte2 = bitsByte1++;
 
-		// Shift the byte to extract the desired bits
-		bits |= (*bitsByte2 >> (8-rem));
+		// Get 2nd Byte containing bits
+		bits2 = *bitsByte2;
 
 		// Mask out bits beyond width of display
-		// TODO
+		if (byteIndex+1 == _pitchBytes){
+				bits2 &= maskBits;
+		}
+
+		// Shift the byte to extract the desired bits
+		bits2 >>= (8 - byteRem);
 	}
 
-	return bits;
+	return bits1 | bits2;
 }
+
 
 int Buffer::getWidth() {
 return _width;

@@ -12,6 +12,8 @@ uint8_t rawDispBuff[BUFF_LEN];
 Led::Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 
 // Prototypes
+void test_Buffer_get8Bit();
+void test_Buffer_set8Bit();
 void test_Buffer_setBit_getBit();
 
 void setup()
@@ -21,9 +23,80 @@ void setup()
 
 void loop()
 {
-	test_Buffer_setBit_getBit();
+	test_Buffer_get8Bit();
+	//test_Buffer_set8Bit();
+	//test_Buffer_setBit_getBit();
 }
 
+void test_Buffer_get8Bit()
+{
+	// Set buffer to all-zeros
+	dispBuff.clear(false);
+
+	// Fill the buffer with known data (externally)
+	for (int b = 0; b < BUFF_LEN; b++)
+		rawDispBuff[b] = b % 255;
+
+	// Print out the buffer result
+	dispBuff.printSerial('X', '.');
+
+	// Loop over byte-alignment
+	for (int bAlign = 0; bAlign < 8; bAlign++){
+
+		// Loop over the height
+		for (int h = 0; h < dispBuff.getHeight(); h++) {
+
+			// Loop across the bytes
+			for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+
+				// Print current parameters
+				String outString = "Set x:" + String(w) + ", y: " + String(h) + ", byteAlign: " + String(bAlign);
+				Serial.println(outString);
+
+				// Print the value from the buffer
+				uint8_t result = dispBuff.get8Bit(w, h);
+				Serial.println(result, BIN);
+
+				// Delay between iterations
+				delay(1000);
+			}
+		}
+	}
+
+
+}
+
+void test_Buffer_set8Bit()
+{
+	// Set buffer to all-ones
+	dispBuff.clear(true);
+
+	// Loop over byte-alignment
+	for (int bAlign = 0; bAlign < 8; bAlign++){
+
+		// Loop over the height
+		for (int h = 0; h < dispBuff.getHeight(); h++) {
+
+			// Loop across the bytes
+			for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+
+				// Print current parameters
+				String outString = "Set x:" + String(w) + ", y: " + String(h) + ", byteAlign: " + String(bAlign);
+				Serial.println(outString);
+
+				// Modify the buffer
+				dispBuff.set8Bit(w, h, 0x91);
+
+				// Print out the buffer
+				dispBuff.printSerial('X', '.');
+				Serial.println("");
+
+				// Delay between iterations
+				delay(1000);
+			}
+		}
+	}
+}
 
 void test_Buffer_setBit_getBit()
 {
