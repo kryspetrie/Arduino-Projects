@@ -37,14 +37,15 @@ void test_Buffer_get8Bit()
 	for (int b = 0; b < BUFF_LEN; b++)
 		rawDispBuff[b] = b % 255;
 
-	// Print out the buffer result
-	dispBuff.printSerial('X', '.');
-
 	// Loop over byte-alignment
 	for (int bAlign = 0; bAlign < 8; bAlign++){
 
+		// Print out the buffer result
+		Serial.println("");
+		dispBuff.printSerial('X', '.');
+
 		// Loop over the height
-		for (int h = 0; h < dispBuff.getHeight(); h++) {
+		for (int h = 0; h < 3/*dispBuff.getHeight()*/; h++) {
 
 			// Loop across the bytes
 			for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
