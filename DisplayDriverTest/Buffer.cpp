@@ -96,11 +96,14 @@ void Buffer::set8Bit(int x, int y, uint8_t data, BlendMode m) {
 
 uint8_t Buffer::get8Bit(int x, int y) {
 
-	uint8_t bits1, bits2;
+	uint8_t bits1(0), bits2(0);
 
 	// Calculate the index information into the byte array
 	uint8_t byteIndex = x / 8;
 	uint8_t byteRem = x % 8;
+
+	// Calculate the row's last byte's index
+	uint8_t lastByteIndex = _pitchBytes - 1;
 
 	// Calculate the mask for bits beyond display width
 	uint8_t maskBits = 0xFF << (8 - _width % 8);
@@ -112,7 +115,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 	bits1 = *bitsByte1;
 
 	// Mask out bits beyond width of display
-	if (byteIndex == _pitchBytes){
+	if (byteIndex == lastByteIndex){
 		bits1 &= maskBits;
 	}
 
@@ -120,7 +123,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 	bits1 <<= byteRem;
 
 	// If we need data from the following byte as well
-	if (byteRem > 0 && (byteIndex < _pitchBytes)) {
+	if (byteRem > 0 && (byteIndex < lastByteIndex)) {
 
 		// Get byte that contains the least significant part of the 8 bits
 		uint8_t* bitsByte2 = bitsByte1++;
@@ -129,7 +132,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 		bits2 = *bitsByte2;
 
 		// Mask out bits beyond width of display
-		if (byteIndex+1 == _pitchBytes){
+		if (byteIndex+1 == lastByteIndex){
 				bits2 &= maskBits;
 		}
 
