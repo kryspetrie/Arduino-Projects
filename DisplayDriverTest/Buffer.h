@@ -12,34 +12,39 @@
 
 namespace Led {
 
-enum BlendMode
-{
-	BUF_COPY = 0,
-	BUF_OR = 1,
-	BUF_AND = 2
-};
-
 class Buffer {
 public:
 	Buffer(const int width, const int height, const int pitchBytes, uint8_t* buff);
 
-	// Full buffer operators
+	// Full buffer operations
 	void clear(bool val = 0);
-	void clearRect(int x, int y, int width, int height, bool val = 0);
+	void fill(uint8_t pattern);
 	void printSerial(char ones, char zeros);
 
-	// Single bit operators
+	// Shape operations
+	void clearRect(int x, int y, int width, int height, bool val = 0);
+
+	// 1-bit operations
 	void setBit(int x, int y, bool val);
 	bool getBit(int x, int y);
 
-	// Multiple bit operators
-	void set8Bit(int x, int y, uint8_t data, BlendMode m = BUF_COPY);
+	// 8-bit operations
+	void set8Bit(int x, int y, uint8_t data);
 	uint8_t get8Bit(int x, int y);
+
+	// Raw byte operations
+	void setByte(unsigned int byteIndex, uint8_t data, unsigned int yIndex = 0);
+	uint8_t getByte(unsigned int byteIndex, unsigned int yIndex = 0);
 
 	// Getters
 	int getWidth();
 	int getHeight();
 	int getPitchBytes();
+	int getSize();
+
+public: // make private
+	void fastHLine(int x, int y, int width, bool val);
+
 
 private:
 	const int _width;

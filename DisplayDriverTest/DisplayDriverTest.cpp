@@ -12,99 +12,240 @@ uint8_t rawDispBuff[BUFF_LEN];
 Led::Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 
 // Prototypes
+void test_Buffer_fastHLine();
+void test_Buffer_clear();
 void test_Buffer_get8Bit();
+void test_Buffer_get8Bit_neg();
 void test_Buffer_set8Bit();
+void test_Buffer_set8Bit_neg();
 void test_Buffer_setBit_getBit();
 
-void setup()
-{
+void setup() {
 	Serial.begin(9600);
 }
 
-void loop()
-{
-	test_Buffer_get8Bit();
+void loop() {
+	test_Buffer_fastHLine();
+	//test_Buffer_get8Bit_neg();
+	//test_Buffer_clear();
+	//test_Buffer_get8Bit();
 	//test_Buffer_set8Bit();
+	//test_Buffer_set8Bit_neg();
 	//test_Buffer_setBit_getBit();
 }
 
-void test_Buffer_get8Bit()
-{
-	// Set buffer to all-zeros
+void test_Buffer_fastHLine() {
+
+	bool color(true);
+
+	while (true) {
+
+		dispBuff.clear(!color);
+		Serial.println("Color: " + String(color));
+
+		// Draw a bunch of lines
+		dispBuff.fastHLine(0, 0, 3, color);
+		dispBuff.fastHLine(3, 1, 3, color);
+		dispBuff.fastHLine(6, 2, 4, color);
+		dispBuff.fastHLine(0, 3, 19, color);
+		dispBuff.fastHLine(1, 4, 18, color);
+
+		// Draw Difficult cases
+		dispBuff.fastHLine(16, 7, 8, color);
+		dispBuff.fastHLine(16, 9, 12, color);
+
+		// Print buffer
+		dispBuff.printSerial('1', '0');
+		Serial.println("");
+
+		color = !color;
+		delay(5000);
+	}
+}
+
+void test_Buffer_set8Bit_neg() {
 	dispBuff.clear(false);
 
-	// Fill the buffer with known data (externally)
-	for (int b = 0; b < BUFF_LEN; b++)
-		rawDispBuff[b] = b % 255;
+	// test some key values
+	dispBuff.set8Bit(0, -1, 0xFF);
+	dispBuff.set8Bit(0, dispBuff.getHeight() + 1, 0xFF);
+	dispBuff.set8Bit(-8, 0, 0xFF);
+	dispBuff.set8Bit(-7, 1, 0xFF);
+	dispBuff.set8Bit(-3, 2, 0xFF);
+	dispBuff.set8Bit(-1, 3, 0XFF);
 
-	// Loop over byte-alignment
-	for (int bAlign = 0; bAlign < 8; bAlign++){
-
-		// Print out the buffer result
-		Serial.println("");
-		dispBuff.printSerial('X', '.');
-
-		// Loop over the height
-		for (int h = 0; h < 3/*dispBuff.getHeight()*/; h++) {
-
-			// Loop across the bytes
-			for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
-
-				// Print current parameters
-				String outString = "Set x:" + String(w) + ", y: " + String(h) + ", byteAlign: " + String(bAlign);
-				Serial.println(outString);
-
-				// Print the value from the buffer
-				uint8_t result = dispBuff.get8Bit(w, h);
-				Serial.println(result, BIN);
-
-				// Delay between iterations
-				delay(1000);
-			}
-		}
-	}
-
-
+	dispBuff.printSerial('1', '0');
+	Serial.println("");
+	delay(5000);
 }
 
-void test_Buffer_set8Bit()
-{
-	// Set buffer to all-ones
+void test_Buffer_get8Bit_neg() {
+
+	// Clear the buffer with 1's
 	dispBuff.clear(true);
 
-	// Loop over byte-alignment
-	for (int bAlign = 0; bAlign < 8; bAlign++){
+	// test some key values
+	uint8_t rowNeg1 = dispBuff.get8Bit(0, -1);
+	uint8_t rowPastLast = dispBuff.get8Bit(0, dispBuff.getHeight() + 1);
+	uint8_t neg7row0 = dispBuff.get8Bit(-7, 0);
+	uint8_t neg8row0 = dispBuff.get8Bit(-8, 0);
+	uint8_t neg7row1 = dispBuff.get8Bit(-7, 1);
+	uint8_t neg8row1 = dispBuff.get8Bit(-8, 1);
+	uint8_t neg4row5 = dispBuff.get8Bit(-4, 5);
 
-		// Loop over the height
-		for (int h = 0; h < dispBuff.getHeight(); h++) {
+	// Print buffer
+	dispBuff.printSerial('1', '0');
+	Serial.println("");
 
-			// Loop across the bytes
-			for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+	// Print results
+	Serial.println(String("row -1: ") + String(rowNeg1, BIN));
+	Serial.println(String("last row + 1: ") + String(rowPastLast, BIN));
+	Serial.println(String("-7, 0: ") + String(neg7row0, BIN));
+	Serial.println(String("-8, 0: ") + String(neg8row0, BIN));
+	Serial.println(String("-7, 1: ") + String(neg7row1, BIN));
+	Serial.println(String("-8, 1: ") + String(neg8row1, BIN));
+	Serial.println(String("-4, 5: ") + String(neg4row5, BIN));
+	Serial.println("");
 
-				// Print current parameters
-				String outString = "Set x:" + String(w) + ", y: " + String(h) + ", byteAlign: " + String(bAlign);
-				Serial.println(outString);
+	delay(2000);
+}
 
-				// Modify the buffer
-				dispBuff.set8Bit(w, h, 0x91);
+void test_Buffer_clear() {
+	bool clearType(false);
 
-				// Print out the buffer
-				dispBuff.printSerial('X', '.');
-				Serial.println("");
+	while (true) {
+		// Put some data into the buffer
+		for (int b = 0; b < BUFF_LEN; b++)
+			dispBuff.setByte(b, 0xAA);
 
-				// Delay between iterations
-				delay(1000);
-			}
-		}
+		// Print the buffer
+		dispBuff.printSerial('1', '0');
+		Serial.println("");
+
+		// Clear the buffer
+		dispBuff.clear(clearType);
+
+		// Print the buffer
+		dispBuff.printSerial('1', '0');
+		Serial.println("");
+
+		// Flip the clear type
+		clearType = !clearType;
+
+		delay(1500);
 	}
 }
 
-void test_Buffer_setBit_getBit()
-{
+void test_Buffer_get8Bit() {
+	int subTest(0);
+
+	while (true) {
+
+		// Set buffer to all-zeros
+		dispBuff.clear(false);
+
+		// Fill the buffer with known data (externally)
+		switch (subTest) {
+
+		case 0:
+			// Fill with all-ones
+			dispBuff.clear(true);
+			break;
+
+		case 1:
+			// Fill with 1-0 pattern
+			dispBuff.fill(0xAA);
+			break;
+
+		case 2:
+			// Fill with 0-1 pattern
+			dispBuff.fill(0x55);
+			break;
+
+		case 3:
+			// Fill with numbers
+			for (int b = 0; b < dispBuff.getSize(); b++)
+				dispBuff.setByte(b, (b % 255));
+			break;
+		}
+
+		// Loop over byte-alignment
+		for (int bAlign = 0; bAlign < 8; bAlign++) {
+
+			// Print out the buffer result
+			Serial.println("");
+			dispBuff.printSerial('X', '.');
+
+			// Loop over the height
+			for (int h = 0; h < dispBuff.getHeight(); h++) {
+
+				// Loop across the bytes
+				for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+
+					// Get the value from the buffer
+					uint8_t result = dispBuff.get8Bit(w, h);
+
+					// Print current parameters
+					String outString = "Set x:" + String(w) + ", y: "
+							+ String(h) + ", byteAlign: " + String(bAlign)
+							+ ", binary: " + String(result, BIN);
+					Serial.println(outString);
+
+					// Delay between iterations
+					delay(100);
+				}
+			}
+		}
+
+		subTest = (subTest + 1) % 4;
+	}
+
+}
+
+void test_Buffer_set8Bit() {
+
 	bool writeVal(true);
 
-	while (true)
-	{
+	while (true) {
+
+		// Loop over byte-alignment
+		for (int bAlign = 0; bAlign < 8; bAlign++) {
+
+			// Loop over the height
+			for (int h = 0; h < 1 /*dispBuff.getHeight()*/; h++) {
+
+				// Loop across the bytes
+				for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+
+					// Set buffer to all-ones
+					dispBuff.clear(writeVal);
+
+					// Print current parameters
+					String outString = "Set x:" + String(w) + ", y: "
+							+ String(h) + ", byteAlign: " + String(bAlign);
+					Serial.println(outString);
+
+					// Modify the buffer
+					dispBuff.set8Bit(w, h, 0x81);
+
+					// Print out the buffer
+					dispBuff.printSerial('X', '.');
+					Serial.println("");
+
+					// Delay between iterations
+					delay(1000);
+				}
+			}
+		}
+
+		writeVal = !writeVal;
+	}
+}
+
+void test_Buffer_setBit_getBit() {
+	bool writeVal(true);
+
+	while (true) {
 		// Loop over the height
 		for (int h = 0; h < dispBuff.getHeight(); h++) {
 
