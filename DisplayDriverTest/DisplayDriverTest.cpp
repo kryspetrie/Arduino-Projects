@@ -51,8 +51,14 @@ void test_Buffer_fastHLine() {
 		dispBuff.fastHLine(1, 4, 18, color);
 
 		// Draw Difficult cases
-		dispBuff.fastHLine(16, 7, 8, color);
-		dispBuff.fastHLine(16, 9, 12, color);
+		dispBuff.fastHLine(16, 5, 8, color);
+		dispBuff.fastHLine(16, 6, 16, color);
+		dispBuff.fastHLine(16, 7, 4, color);
+
+		// Out of bounds
+		dispBuff.fastHLine(16, 10, 5, color);
+		dispBuff.fastHLine(0, -1, 10, color);
+		dispBuff.fastHLine(-4, 8, 11, color);
 
 		// Print buffer
 		dispBuff.printSerial('1', '0');

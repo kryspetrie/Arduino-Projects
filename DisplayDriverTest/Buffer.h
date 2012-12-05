@@ -36,6 +36,10 @@ public:
 	void setByte(unsigned int byteIndex, uint8_t data, unsigned int yIndex = 0);
 	uint8_t getByte(unsigned int byteIndex, unsigned int yIndex = 0);
 
+	// Raw buffer operations
+	void clearRaw(bool val = 0);
+	void fillRaw(uint8_t pattern);
+
 	// Getters
 	int getWidth();
 	int getHeight();

@@ -26,11 +26,23 @@ Buffer::Buffer(const int width, const int height, const int pitchBytes,
 }
 
 void Buffer::clear(bool val) {
+	// TODO do this correctly
+
+	clearRaw(val);
+}
+
+void Buffer::fill(uint8_t pattern) {
+	// TODO do this correctly
+
+	fillRaw(pattern);
+}
+
+void Buffer::clearRaw(bool val) {
 	uint8_t bits = val ? 0xFF : 0x00;
 	memset(_buff, bits, getSize());
 }
 
-void Buffer::fill(uint8_t pattern) {
+void Buffer::fillRaw(uint8_t pattern) {
 	memset(_buff, pattern, getSize());
 }
 
@@ -264,33 +276,57 @@ uint8_t Buffer::get8Bit(int x, int y) {
 }
 
 void Buffer::fastHLine(int x, int y, int width, bool val) {
-	// TODO fix this! It's wrong!
 
-	// Determine bit pattern
-	uint8_t writeVal = val ? 0xFF : 0x00;
+	// Handle out-of-bounds X
+	if (x > _width)
+		return;
 
-	// Calculate the index information
+	// Handle out-of-bounds Y
+	if (y < 0 || y >= _height)
+		return;
+
+	// Handle 0-width
+	if (width == 0)
+		return;
+
+	// Handle negative width
+	if (width < 0)
+		x -= width;
+
+	// Handle negative X
+	if (x < 0) {
+		if (x + width < 0)
+			return;
+
+		// Realign at zero
+		width = x + width;
+		x = 0;
+	}
+
+	// Calculate indexes
 	uint8_t startRem = x % 8;
 	uint8_t endRem = (x + width) % 8;
-	int nMiddleBytes = (width - startRem - endRem) / 8;
 
 	// Write first 8 (slow)
-	if (startRem > 0) {
+	bool fullByte1 = (startRem == 0) && (width >= 8) && (x + width < _width);
+	if (fullByte1  == false) {
 		for (int i = 0; (i < width) && (i < 8-startRem); i++)
 			setBit(x + i, y, val);
 	}
 
-/*	// Write the middle bytes (fast)
+	// Write the middle bytes (fast)
+	int nMiddleBytes = (width - (8-startRem) - endRem) / 8 + (int) fullByte1;
 	if (nMiddleBytes > 0) {
+		uint8_t writeVal = val ? 0xFF : 0x00;
 		uint8_t* middleByte = _buff + (y * _pitchBytes) + ((x + 7) / 8);
 		memset(middleByte, writeVal, nMiddleBytes);
 	}
-*/
+
 	// Write last 8 (slow)
-	if (endRem > 0) {
-		int lastX = x + width - endRem;
-		for (int i = 0; (i < width) && (i < 8-endRem); i++)
-			setBit(lastX + i, y, val);
+	if (endRem > 0 && (startRem + width) > 8) {
+		int lastBitsX = x + width - endRem;
+		for (int i = 0; i < endRem; i++)
+			setBit(lastBitsX + i, y, val);
 	}
 }
 
