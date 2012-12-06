@@ -13,6 +13,7 @@ Led::Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 
 // Prototypes
 void test_Buffer_fastHLine();
+void test_Buffer_fastHLine_2();
 void test_Buffer_clear();
 void test_Buffer_get8Bit();
 void test_Buffer_get8Bit_neg();
@@ -25,7 +26,8 @@ void setup() {
 }
 
 void loop() {
-	test_Buffer_fastHLine();
+	//test_Buffer_fastHLine_2();
+	//test_Buffer_fastHLine();
 	//test_Buffer_get8Bit_neg();
 	//test_Buffer_clear();
 	//test_Buffer_get8Bit();
@@ -34,13 +36,39 @@ void loop() {
 	//test_Buffer_setBit_getBit();
 }
 
+
+#ifdef TESTCODE
+void test_Buffer_fastHLine_2() {
+
+	bool color(true);
+
+	while (true) {
+
+		dispBuff.clearRaw(!color);
+		Serial.println("Color: " + String(color));
+
+		dispBuff.clearRaw(!color);
+		dispBuff.fastHLine(0, 0, 19, color);
+		dispBuff.fastHLine(0, 1, 20, color);
+		dispBuff.fastHLine(0, 2, 21, color);
+		dispBuff.fastHLine(1, 3, 19, color);
+		dispBuff.fastHLine(1, 4, 20, color);
+		dispBuff.fastHLine(1, 5, 21, color);
+		dispBuff.printSerial('1', '0');
+		Serial.println("");
+
+		color = !color;
+		delay(5000);
+	}
+}
+
 void test_Buffer_fastHLine() {
 
 	bool color(true);
 
 	while (true) {
 
-		dispBuff.clear(!color);
+		dispBuff.clearRaw(!color);
 		Serial.println("Color: " + String(color));
 
 		// Draw a bunch of lines
@@ -160,12 +188,12 @@ void test_Buffer_get8Bit() {
 
 		case 1:
 			// Fill with 1-0 pattern
-			dispBuff.fill(0xAA);
+			dispBuff.fillRaw(0xAA);
 			break;
 
 		case 2:
 			// Fill with 0-1 pattern
-			dispBuff.fill(0x55);
+			dispBuff.fillRaw(0x55);
 			break;
 
 		case 3:
@@ -280,3 +308,4 @@ void test_Buffer_setBit_getBit() {
 		writeVal = !writeVal;
 	}
 }
+#endif

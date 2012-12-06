@@ -18,7 +18,6 @@ public:
 
 	// Full buffer operations
 	void clear(bool val = 0);
-	void fill(uint8_t pattern);
 	void printSerial(char ones, char zeros);
 
 	// Shape operations

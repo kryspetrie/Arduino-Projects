@@ -13,11 +13,11 @@ using namespace Led;
  *  provided buffer.  The provided buffer MUST BE equal to at least
  *  pitchBytes * height.
  *
- *  @param width The width of the image buffer in pixels
- *  @param height The height of image buffer in pixels
- *  @param pitchBytes The number of bytes provided for each row.
+ *  \param width The width of the image buffer in pixels
+ *  \param height The height of image buffer in pixels
+ *  \param pitchBytes The number of bytes provided for each row.
  *  	This must be at least floor( (width + 7)/8 ) bytes
- *  @param buff pointer to the display buffer array
+ *  \param buff pointer to the display buffer array
  */
 Buffer::Buffer(const int width, const int height, const int pitchBytes,
 		uint8_t* buff) :
@@ -26,15 +26,17 @@ Buffer::Buffer(const int width, const int height, const int pitchBytes,
 }
 
 void Buffer::clear(bool val) {
-	// TODO do this correctly
 
-	clearRaw(val);
+	for (int y = 0; y < _height; y++)
+		fastHLine(0, y, _width, val);
 }
 
-void Buffer::fill(uint8_t pattern) {
-	// TODO do this correctly
+void Buffer::clearRect(int x, int y, int width, int height, bool val) {
+	int lastRow = y + height;
 
-	fillRaw(pattern);
+	// Note: fastHLine will handle input error conditions
+	for (int row = y; row < lastRow; row++)
+		fastHLine(x, row, width, val);
 }
 
 void Buffer::clearRaw(bool val) {
@@ -46,8 +48,7 @@ void Buffer::fillRaw(uint8_t pattern) {
 	memset(_buff, pattern, getSize());
 }
 
-void Buffer::setByte(unsigned int byteIndex, uint8_t data,
-		unsigned int yIndex) {
+void Buffer::setByte(unsigned int byteIndex, uint8_t data, unsigned int yIndex) {
 	int i = byteIndex * (yIndex + 1);
 
 	// Set data, if not over end of buffer
@@ -247,9 +248,8 @@ uint8_t Buffer::get8Bit(int x, int y) {
 	bits1 = *bitsByte1;
 
 	// Mask out bits beyond width of display
-	if (byteIndex == lastByteIndex) {
+	if (byteIndex == lastByteIndex)
 		bits1 &= maskBits;
-	}
 
 	// Shift the bits by the remainder to realign left
 	bits1 <<= byteRem;
@@ -264,9 +264,8 @@ uint8_t Buffer::get8Bit(int x, int y) {
 		bits2 = *bitsByte2;
 
 		// Mask out bits beyond width of display
-		if (byteIndex + 1 == lastByteIndex) {
+		if (byteIndex + 1 == lastByteIndex)
 			bits2 &= maskBits;
-		}
 
 		// Shift the byte to extract the desired bits
 		bits2 >>= (8 - byteRem);
@@ -290,8 +289,10 @@ void Buffer::fastHLine(int x, int y, int width, bool val) {
 		return;
 
 	// Handle negative width
-	if (width < 0)
+	if (width < 0) {
+		width = abs(width);
 		x -= width;
+	}
 
 	// Handle negative X
 	if (x < 0) {
@@ -303,26 +304,30 @@ void Buffer::fastHLine(int x, int y, int width, bool val) {
 		x = 0;
 	}
 
+	// Handle out-of-bounds width
+	if (x + width > _width)
+		width = _width - x;
+
 	// Calculate indexes
 	uint8_t startRem = x % 8;
 	uint8_t endRem = (x + width) % 8;
 
-	// Write first 8 (slow)
-	bool fullByte1 = (startRem == 0) && (width >= 8) && (x + width < _width);
-	if (fullByte1  == false) {
+	// Write first non-byte-aligned bits (slow)
+	uint8_t fullByte1 = (startRem == 0) && (width >= 8) && (x + width <= _width);
+	if (!fullByte1) {
 		for (int i = 0; (i < width) && (i < 8-startRem); i++)
 			setBit(x + i, y, val);
 	}
 
-	// Write the middle bytes (fast)
-	int nMiddleBytes = (width - (8-startRem) - endRem) / 8 + (int) fullByte1;
+	// Write the middle byte-aligned 8-bit blocks (fast)
+	uint8_t nMiddleBytes = (width - (8-startRem) - endRem) / 8 + fullByte1;
 	if (nMiddleBytes > 0) {
 		uint8_t writeVal = val ? 0xFF : 0x00;
 		uint8_t* middleByte = _buff + (y * _pitchBytes) + ((x + 7) / 8);
 		memset(middleByte, writeVal, nMiddleBytes);
 	}
 
-	// Write last 8 (slow)
+	// Write last non-byte-aligned bits (slow)
 	if (endRem > 0 && (startRem + width) > 8) {
 		int lastBitsX = x + width - endRem;
 		for (int i = 0; i < endRem; i++)
