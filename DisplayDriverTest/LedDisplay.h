@@ -10,7 +10,7 @@
 
 #include "Arduino.h"
 
-namespace Led {
+namespace Display {
 
 class LedDisplay {
 public:

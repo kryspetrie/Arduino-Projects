@@ -9,23 +9,32 @@
 #define BUFFER_H_
 
 #include "Arduino.h"
+#include "Common.h"
 
-namespace Led {
+// Enable the following as needed
+
+namespace Display {
 
 class Buffer {
 public:
 	Buffer(const int width, const int height, const int pitchBytes, uint8_t* buff);
 
 	// Full buffer operations
-	void clear(bool val = 0);
-	void printSerial(char ones, char zeros);
+	void clear();
+	void clear(Color color);
+	void printSerial(char ones = '1', char zeros = '0');
+
+	// Buffer clear color
+	void setColor(Color color);
+	Color getColor();
 
 	// Shape operations
-	void clearRect(int x, int y, int width, int height, bool val = 0);
+	void clearRect(int x, int y, int width, int height);
+	void clearRect(int x, int y, int width, int height, Color color);
 
 	// 1-bit operations
-	void setBit(int x, int y, bool val);
-	bool getBit(int x, int y);
+	void setBit(int x, int y, Color color);
+	Color getBit(int x, int y);
 
 	// 8-bit operations
 	void set8Bit(int x, int y, uint8_t data);
@@ -36,7 +45,7 @@ public:
 	uint8_t getByte(unsigned int byteIndex, unsigned int yIndex = 0);
 
 	// Raw buffer operations
-	void clearRaw(bool val = 0);
+	void clearRaw(Color color = BLACK);
 	void fillRaw(uint8_t pattern);
 
 	// Getters
@@ -45,15 +54,17 @@ public:
 	int getPitchBytes();
 	int getSize();
 
-public: // make private
-	void fastHLine(int x, int y, int width, bool val);
-
+public:
+	// make private
+	void fastHLine(int x, int y, int width, Color colorl);
+	void memsetColor(uint8_t* buff, Color color, size_t bytes);
 
 private:
 	const int _width;
 	const int _height;
 	const int _pitchBytes;
 	uint8_t* _buff;
+	Color _color;
 };
 
 } /* namespace Led */

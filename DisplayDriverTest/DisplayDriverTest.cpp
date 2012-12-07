@@ -1,5 +1,8 @@
 #include "DisplayDriverTest.h"
 #include "Buffer.h"
+#include "SimpleFont.h"
+
+using namespace Display;
 
 // Set LED display parameters
 const int WD_PX = 20;
@@ -9,9 +12,43 @@ const int BUFF_LEN = WD_BYTES * HT_PX;
 
 // Create LED display object
 uint8_t rawDispBuff[BUFF_LEN];
-Led::Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
+Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
+SimpleFont sFont(&dispBuff);
 
 // Prototypes
+void test_SimpleFont_writeChar();
+
+void setup() {
+	Serial.begin(9600);
+}
+
+void loop() {
+	test_SimpleFont_writeChar();
+}
+
+void test_SimpleFont_writeChar() {
+
+	Color a(BLACK);
+	Color b(WHITE);
+
+	while (true) {
+
+		dispBuff.clear(a);
+		sFont.setColor(b);
+		sFont.drawChar(1, 1, '9');
+		sFont.drawChar(6, 1, '2');
+		sFont.drawChar(11, 1, '5');
+		dispBuff.printSerial('#', '-');
+		delay(5000);
+
+		// Swap colors
+		Color tmp(a);
+		a = b;
+		b = tmp;
+	}
+}
+
+#ifdef TESTCODE
 void test_Buffer_fastHLine();
 void test_Buffer_fastHLine_2();
 void test_Buffer_clear();
@@ -21,23 +58,6 @@ void test_Buffer_set8Bit();
 void test_Buffer_set8Bit_neg();
 void test_Buffer_setBit_getBit();
 
-void setup() {
-	Serial.begin(9600);
-}
-
-void loop() {
-	//test_Buffer_fastHLine_2();
-	//test_Buffer_fastHLine();
-	//test_Buffer_get8Bit_neg();
-	//test_Buffer_clear();
-	//test_Buffer_get8Bit();
-	//test_Buffer_set8Bit();
-	//test_Buffer_set8Bit_neg();
-	//test_Buffer_setBit_getBit();
-}
-
-
-#ifdef TESTCODE
 void test_Buffer_fastHLine_2() {
 
 	bool color(true);
@@ -150,7 +170,7 @@ void test_Buffer_clear() {
 	while (true) {
 		// Put some data into the buffer
 		for (int b = 0; b < BUFF_LEN; b++)
-			dispBuff.setByte(b, 0xAA);
+		dispBuff.setByte(b, 0xAA);
 
 		// Print the buffer
 		dispBuff.printSerial('1', '0');
@@ -181,25 +201,25 @@ void test_Buffer_get8Bit() {
 		// Fill the buffer with known data (externally)
 		switch (subTest) {
 
-		case 0:
+			case 0:
 			// Fill with all-ones
 			dispBuff.clear(true);
 			break;
 
-		case 1:
+			case 1:
 			// Fill with 1-0 pattern
 			dispBuff.fillRaw(0xAA);
 			break;
 
-		case 2:
+			case 2:
 			// Fill with 0-1 pattern
 			dispBuff.fillRaw(0x55);
 			break;
 
-		case 3:
+			case 3:
 			// Fill with numbers
 			for (int b = 0; b < dispBuff.getSize(); b++)
-				dispBuff.setByte(b, (b % 255));
+			dispBuff.setByte(b, (b % 255));
 			break;
 		}
 
@@ -221,8 +241,8 @@ void test_Buffer_get8Bit() {
 
 					// Print current parameters
 					String outString = "Set x:" + String(w) + ", y: "
-							+ String(h) + ", byteAlign: " + String(bAlign)
-							+ ", binary: " + String(result, BIN);
+					+ String(h) + ", byteAlign: " + String(bAlign)
+					+ ", binary: " + String(result, BIN);
 					Serial.println(outString);
 
 					// Delay between iterations
@@ -256,7 +276,7 @@ void test_Buffer_set8Bit() {
 
 					// Print current parameters
 					String outString = "Set x:" + String(w) + ", y: "
-							+ String(h) + ", byteAlign: " + String(bAlign);
+					+ String(h) + ", byteAlign: " + String(bAlign);
 					Serial.println(outString);
 
 					// Modify the buffer

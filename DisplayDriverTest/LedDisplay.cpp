@@ -7,7 +7,7 @@
 
 #include "LedDisplay.h"
 
-using namespace Led;
+using namespace Display;
 
 LedDisplay::LedDisplay() {
 	// TODO Auto-generated constructor stub

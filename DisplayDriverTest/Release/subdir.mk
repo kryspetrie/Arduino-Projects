@@ -29,7 +29,7 @@ CPP_DEPS += \
 %.o: ../%.cpp
 	@echo 'Building file: $<'
 	@echo 'Invoking: AVR C++ Compiler'
-	avr-g++ -I"C:\dev\arduino\ide\hardware\arduino\cores\arduino" -I"C:\dev\arduino\ide\hardware\arduino\variants\standard" -I"C:\dev\arduino\workspace\DisplayDriverTest" -D__IN_ECLIPSE__=1 -DUSB_VID= -DUSB_PID= -DARDUINO=102 -Wall -Os -ffunction-sections -fdata-sections -fno-exceptions -g -mmcu=atmega168 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"  -c -o "$@" -x c++ "$<"
+	avr-g++ -I"C:\dev\arduino\ide\hardware\arduino\cores\arduino" -I"C:\dev\arduino\ide\hardware\arduino\variants\standard" -I"C:\Users\cpetrie\git\Arduino\DisplayDriverTest" -D__IN_ECLIPSE__=1 -DUSB_VID= -DUSB_PID= -DARDUINO=102 -Wall -Os -ffunction-sections -fdata-sections -fno-exceptions -g -mmcu=atmega168 -DF_CPU=16000000UL -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"  -c -o "$@" -x c++ "$<"
 	@echo 'Finished building: $<'
 	@echo ' '
 

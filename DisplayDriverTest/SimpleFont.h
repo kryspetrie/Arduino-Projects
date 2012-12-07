@@ -11,7 +11,7 @@
 #include "Font.h"
 #include "Buffer.h"
 
-namespace Led {
+namespace Display {
 
 class SimpleFont: public Font {
 public:
@@ -29,8 +29,8 @@ private:
 
 private:
 	// Const dimensions
-	static const uint8_t width = 4;
-	static const uint8_t height = 5;
+	static const uint8_t _width = 4;
+	static const uint8_t _height = 5;
 };
 
 } /* namespace Led */

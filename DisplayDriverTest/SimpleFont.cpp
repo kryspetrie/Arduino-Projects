@@ -6,13 +6,11 @@
  */
 
 #include "SimpleFont.h"
-#include "avr/io.h"
-#include "avr/pgmspace.h"
 
-using namespace Led;
+using namespace Display;
 
-// Const bitmaps
-static uint32_t fontArray[] /*PROGMEM*/ = {
+// Font bitmap data
+uint32_t fontArray[] = {
 	0x06b9d6, // '0'
 	0x026227, // '1'
 	0x0e178f, // '2'
@@ -27,7 +25,7 @@ static uint32_t fontArray[] /*PROGMEM*/ = {
 
 SimpleFont::SimpleFont(Buffer* buff) : Font(buff) {
 	_kerning = 1;
-	_spacing = height + 1;
+	_spacing = _height + 1;
 }
 
 SimpleFont::~SimpleFont() {}
@@ -36,7 +34,20 @@ void SimpleFont::drawChar(int x, int y, char c) {
 	uint32_t bitmap;
 	bitmap = getBitmap(c);
 
-	// TODO implement this!
+	// Loop across the height
+	for (int h = _height-1; h >= 0; h--) {
+
+		// loop across the width
+		for (int w = _width-1; w >= 0; w--) {
+
+			// Set only bits that are 1's
+			if (bitmap & 0x01)
+				_buff->setBit(x+w, y+h, _color);
+
+			// Shift out a bit
+			bitmap >>= 1;
+		}
+	}
 }
 
 void SimpleFont::drawString(int x, int y, char* string) {
@@ -44,11 +55,11 @@ void SimpleFont::drawString(int x, int y, char* string) {
 }
 
 uint8_t SimpleFont::getHeight() {
-	return height;
+	return _height;
 }
 
 uint8_t SimpleFont::getWidth() {
-	return width;
+	return _width;
 }
 
 uint32_t SimpleFont::getBitmap(char c) {

@@ -6,9 +6,9 @@
  */
 
 #include "Font.h"
-using namespace Led;
+using namespace Display;
 
-Font::Font(Buffer* buff) : _buff(buff), _kerning(0), _spacing(0), _invert(false){}
+Font::Font(Buffer* buff) : _buff(buff), _kerning(0), _spacing(0), _color(WHITE){}
 
 Font::~Font() {}
 
@@ -28,6 +28,6 @@ void Font::setSpacing(uint8_t spacing) {
 	_spacing = spacing;
 }
 
-void Font::setInvert(bool invert){
-	_invert = invert;
+void Font::setColor(Color color){
+	_color = color;
 }

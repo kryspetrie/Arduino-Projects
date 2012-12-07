@@ -6,7 +6,7 @@
  */
 
 #include "Buffer.h"
-using namespace Led;
+using namespace Display;
 
 /**
  * Creates a buffer object with a certain width/height, using the
@@ -19,29 +19,35 @@ using namespace Led;
  *  	This must be at least floor( (width + 7)/8 ) bytes
  *  \param buff pointer to the display buffer array
  */
-Buffer::Buffer(const int width, const int height, const int pitchBytes,
-		uint8_t* buff) :
-		_width(width), _height(height), _pitchBytes(pitchBytes), _buff(buff) {
-	clear();
+Buffer::Buffer(const int width, const int height, const int pitchBytes, uint8_t* buff) :
+		_width(width), _height(height), _pitchBytes(pitchBytes), _buff(buff), _color(BLACK) {
+	clear(_color);
 }
 
-void Buffer::clear(bool val) {
+void Buffer::clear() {
+	clear(_color);
+}
+
+void Buffer::clear(Color color) {
 
 	for (int y = 0; y < _height; y++)
-		fastHLine(0, y, _width, val);
+		fastHLine(0, y, _width, color);
 }
 
-void Buffer::clearRect(int x, int y, int width, int height, bool val) {
+void Buffer::clearRect(int x, int y, int width, int height) {
+	clearRect(x, y, width, height, _color);
+}
+
+void Buffer::clearRect(int x, int y, int width, int height, Color color) {
 	int lastRow = y + height;
 
 	// Note: fastHLine will handle input error conditions
 	for (int row = y; row < lastRow; row++)
-		fastHLine(x, row, width, val);
+		fastHLine(x, row, width, color);
 }
 
-void Buffer::clearRaw(bool val) {
-	uint8_t bits = val ? 0xFF : 0x00;
-	memset(_buff, bits, getSize());
+void Buffer::clearRaw(Color color) {
+	memsetColor(_buff, color, getSize());
 }
 
 void Buffer::fillRaw(uint8_t pattern) {
@@ -80,12 +86,11 @@ void Buffer::printSerial(char ones, char zeros) {
 		for (int w = 0; w < _width; w++) {
 
 			// Get the bit
-			bool bit = getBit(w, h);
+			Color color = getBit(w, h);
 
 			// Print the bit
-			char bitChar = bit ? ones : zeros;
+			char bitChar = (color == WHITE) ? ones : zeros;
 			Serial.print(bitChar);
-
 		}
 
 		// Print an end-line for each row
@@ -93,7 +98,7 @@ void Buffer::printSerial(char ones, char zeros) {
 	}
 }
 
-void Buffer::setBit(int x, int y, bool val) {
+void Buffer::setBit(int x, int y, Color color) {
 
 	// Check input variables
 	if (x > _width || x < 0 || y > _height || y < 0)
@@ -105,18 +110,18 @@ void Buffer::setBit(int x, int y, bool val) {
 	// Shift over the bit to change
 	uint8_t bit = 0x01 << (7 - (x % 8));
 
-	if (val) {
+	if (color == WHITE) {
 		*bitBytePtr |= bit;  // set the bit
 	} else {
 		*bitBytePtr &= ~bit; // clear the bit
 	}
 }
 
-bool Buffer::getBit(int x, int y) {
+Color Buffer::getBit(int x, int y) {
 
 	// Check input variables
 	if (x > _width || x < 0 || y > _height || y < 0)
-		return false;
+		return _color;
 
 	// Get byte that contains the bit
 	uint8_t bitByte = *(_buff + (_pitchBytes * y) + (x / 8));
@@ -124,7 +129,7 @@ bool Buffer::getBit(int x, int y) {
 	// Shift the byte to extract the desired bit
 	uint8_t bit = (bitByte << (x % 8)) & 0x80;
 
-	return bit ? true : false;
+	return bit ? WHITE : BLACK;
 }
 
 void Buffer::set8Bit(int x, int y, uint8_t data) {
@@ -211,7 +216,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 
 	// Return if non-existent row
 	if (y > _height || y < 0)
-		return 0;
+		return (_color == BLACK) ? 0xFF : 0x00;
 
 	// Special case for negative x-index
 	if (x < 0) {
@@ -274,7 +279,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 	return bits1 | bits2;
 }
 
-void Buffer::fastHLine(int x, int y, int width, bool val) {
+void Buffer::fastHLine(int x, int y, int width, Color color) {
 
 	// Handle out-of-bounds X
 	if (x > _width)
@@ -315,24 +320,36 @@ void Buffer::fastHLine(int x, int y, int width, bool val) {
 	// Write first non-byte-aligned bits (slow)
 	uint8_t fullByte1 = (startRem == 0) && (width >= 8) && (x + width <= _width);
 	if (!fullByte1) {
-		for (int i = 0; (i < width) && (i < 8-startRem); i++)
-			setBit(x + i, y, val);
+		for (int i = 0; (i < width) && (i < 8 - startRem); i++)
+			setBit(x + i, y, color);
 	}
 
 	// Write the middle byte-aligned 8-bit blocks (fast)
-	uint8_t nMiddleBytes = (width - (8-startRem) - endRem) / 8 + fullByte1;
+	uint8_t nMiddleBytes = (width - (8 - startRem) - endRem) / 8 + fullByte1;
 	if (nMiddleBytes > 0) {
-		uint8_t writeVal = val ? 0xFF : 0x00;
 		uint8_t* middleByte = _buff + (y * _pitchBytes) + ((x + 7) / 8);
-		memset(middleByte, writeVal, nMiddleBytes);
+		memsetColor(middleByte, color, nMiddleBytes);
 	}
 
 	// Write last non-byte-aligned bits (slow)
 	if (endRem > 0 && (startRem + width) > 8) {
 		int lastBitsX = x + width - endRem;
 		for (int i = 0; i < endRem; i++)
-			setBit(lastBitsX + i, y, val);
+			setBit(lastBitsX + i, y, color);
 	}
+}
+
+void Buffer::memsetColor(uint8_t* buff, Color color, size_t bytes) {
+	uint8_t writeVal = (color == WHITE) ? 0xFF : 0x00;
+	memset(buff, writeVal, bytes);
+}
+
+void Buffer::setColor(Color color) {
+	_color = color;
+}
+
+Color Buffer::getColor() {
+	return _color;
 }
 
 int Buffer::getWidth() {
