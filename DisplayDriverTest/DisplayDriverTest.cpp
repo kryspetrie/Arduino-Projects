@@ -16,16 +16,39 @@ Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
 // Prototypes
-void test_SimpleFont_writeChar();
+void test_SimpleFont_writeChar_all();
 
 void setup() {
 	Serial.begin(9600);
 }
 
 void loop() {
-	test_SimpleFont_writeChar();
+	test_SimpleFont_writeChar_all();
 }
 
+void test_SimpleFont_writeChar_all() {
+	sFont.setColor(WHITE);
+	sFont.setStyle(NOSTYLE);
+
+	while (true) {
+		for (char c = ' '; c < '~'; c++) {
+
+			dispBuff.clear(BLACK);
+			sFont.drawChar(1, 1, c);
+			Serial.println("Current Character: " + String(c) + ", Val: " + String((int) c, DEC));
+			dispBuff.printSerial('#', '-');
+			Serial.println("");
+			delay(100);
+		}
+
+		if (sFont.getStyle() == NOSTYLE)
+			sFont.setStyle(BOLD);
+		else
+			sFont.setStyle(NOSTYLE);
+	}
+}
+
+#ifdef TESTCODE
 void test_SimpleFont_writeChar() {
 
 	Color a(BLACK);
@@ -48,7 +71,7 @@ void test_SimpleFont_writeChar() {
 	}
 }
 
-#ifdef TESTCODE
+void test_SimpleFont_writeChar();
 void test_Buffer_fastHLine();
 void test_Buffer_fastHLine_2();
 void test_Buffer_clear();

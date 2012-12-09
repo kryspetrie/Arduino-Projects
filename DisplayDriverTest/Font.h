@@ -14,6 +14,12 @@
 
 namespace Display {
 
+enum FontStyle {
+	NOSTYLE = 0,
+	BOLD = 1,
+	ITALIC = 2
+};
+
 class Font {
 public:
 	Font(Buffer* buff);
@@ -26,17 +32,21 @@ public:
 	virtual uint8_t getWidth() = 0;
 
 	// Default behaviors
-	virtual uint8_t getKerning();
-	virtual void setKerning(uint8_t width);
+
 	virtual uint8_t getSpacing();
 	virtual void setSpacing(uint8_t spacing);
+
 	virtual void setColor(Color c);
+	virtual Color getColor();
+
+	virtual void setStyle(FontStyle style);
+	virtual FontStyle getStyle();
 
 protected:
 	Buffer* _buff;
-	uint8_t _kerning;
 	uint8_t _spacing;
 	Color _color;
+	FontStyle _style;
 
 private:
 };
