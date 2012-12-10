@@ -75,6 +75,7 @@ uint32_t _punc4[] = {
 
 SimpleFont::SimpleFont(Buffer* buff) : Font(buff) {
 	_spacing = _height + 1;
+	_kerning = 2;
 }
 
 SimpleFont::~SimpleFont() {}
@@ -99,13 +100,13 @@ void SimpleFont::drawChar(int x, int y, char c) {
 	}
 }
 
-void SimpleFont::drawString(int x, int y, char* string) {
+void SimpleFont::drawString(int x, int y, const char* string) {
 
 	// Write one line
 	while (*string != 0) {
 		drawChar(x, y, *string);
 		string++;
-		x += _spacing;
+		x += (_width + _kerning);
 	}
 }
 

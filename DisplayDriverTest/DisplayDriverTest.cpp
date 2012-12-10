@@ -5,7 +5,7 @@
 using namespace Display;
 
 // Set LED display parameters
-const int WD_PX = 20;
+const int WD_PX = 100; //20;
 const int HT_PX = 10;
 const int WD_BYTES = (WD_PX + 7) / 8;
 const int BUFF_LEN = WD_BYTES * HT_PX;
@@ -15,15 +15,49 @@ uint8_t rawDispBuff[BUFF_LEN];
 Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
-// Prototypes
-void test_SimpleFont_writeChar_all();
+void test_SimpleFont_writeString_2() {
+	Color colorA(BLACK);
+	Color colorB(WHITE);
+	sFont.setColor(colorB);
+
+	for (int yInd = 0; yInd < 11; yInd++) {
+		dispBuff.clear(colorA);
+		sFont.drawString(1, yInd, "ABC-123-/|\\");
+		dispBuff.printSerial('@', '.');
+		Serial.println("");
+
+		delay(1000);
+	}
+}
 
 void setup() {
 	Serial.begin(9600);
 }
 
 void loop() {
-	test_SimpleFont_writeChar_all();
+	test_SimpleFont_writeString_2();
+}
+
+#ifdef TESTCODE
+
+void test_SimpleFont_writeString() {
+	Color colorA(BLACK);
+	Color colorB(WHITE);
+
+	while (true) {
+		dispBuff.clear(colorA);
+		sFont.setColor(colorB);
+		sFont.drawString(0, 0, "ASDF_string");
+		sFont.drawString(0, 5, "Lolol@#$%&");
+		dispBuff.printSerial('@', '.');
+
+		// swap colors
+		Color tmp(colorA);
+		colorA = colorB;
+		colorB = tmp;
+
+		delay(1000);
+	}
 }
 
 void test_SimpleFont_writeChar_all() {
@@ -42,13 +76,12 @@ void test_SimpleFont_writeChar_all() {
 		}
 
 		if (sFont.getStyle() == NOSTYLE)
-			sFont.setStyle(BOLD);
+		sFont.setStyle(BOLD);
 		else
-			sFont.setStyle(NOSTYLE);
+		sFont.setStyle(NOSTYLE);
 	}
 }
 
-#ifdef TESTCODE
 void test_SimpleFont_writeChar() {
 
 	Color a(BLACK);
@@ -70,16 +103,6 @@ void test_SimpleFont_writeChar() {
 		b = tmp;
 	}
 }
-
-void test_SimpleFont_writeChar();
-void test_Buffer_fastHLine();
-void test_Buffer_fastHLine_2();
-void test_Buffer_clear();
-void test_Buffer_get8Bit();
-void test_Buffer_get8Bit_neg();
-void test_Buffer_set8Bit();
-void test_Buffer_set8Bit_neg();
-void test_Buffer_setBit_getBit();
 
 void test_Buffer_fastHLine_2() {
 

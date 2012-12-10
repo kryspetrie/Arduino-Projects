@@ -27,11 +27,13 @@ public:
 
 	// Pure Virtual
 	virtual void drawChar(int x, int y, char c) = 0;
-	virtual void drawString(int x, int y, char* string) = 0;
+	virtual void drawString(int x, int y, const char* string) = 0;
 	virtual uint8_t getHeight() = 0;
 	virtual uint8_t getWidth() = 0;
 
 	// Default behaviors
+	virtual uint8_t getKerning();
+	virtual void setKerning(uint8_t kerning);
 
 	virtual uint8_t getSpacing();
 	virtual void setSpacing(uint8_t spacing);
@@ -45,6 +47,7 @@ public:
 protected:
 	Buffer* _buff;
 	uint8_t _spacing;
+	uint8_t _kerning;
 	Color _color;
 	FontStyle _style;
 

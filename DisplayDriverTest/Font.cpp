@@ -8,7 +8,7 @@
 #include "Font.h"
 using namespace Display;
 
-Font::Font(Buffer* buff) : _buff(buff), _spacing(0), _color(WHITE), _style(NOSTYLE){}
+Font::Font(Buffer* buff) : _buff(buff), _spacing(0), _kerning(0), _color(WHITE), _style(NOSTYLE){}
 
 Font::~Font() {}
 
@@ -30,6 +30,14 @@ Color Display::Font::getColor() {
 
 void Display::Font::setStyle(FontStyle style) {
 	_style = style;
+}
+
+uint8_t Display::Font::getKerning() {
+	return _kerning;
+}
+
+void Display::Font::setKerning(uint8_t kerning) {
+	_kerning = kerning;
 }
 
 FontStyle Display::Font::getStyle() {

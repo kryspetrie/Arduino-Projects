@@ -20,7 +20,7 @@ public:
 
 	// Implementations
 	virtual void drawChar(int x, int y, char c);
-	virtual void drawString(int x, int y, char* string);
+	virtual void drawString(int x, int y, const char* string);
 	virtual uint8_t getHeight();
 	virtual uint8_t getWidth();
 

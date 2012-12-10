@@ -101,7 +101,7 @@ void Buffer::printSerial(char ones, char zeros) {
 void Buffer::setBit(int x, int y, Color color) {
 
 	// Check input variables
-	if (x > _width || x < 0 || y > _height || y < 0)
+	if (x >= _width || x < 0 || y >= _height || y < 0)
 		return;
 
 	// Get byte pointer that contains the bit
@@ -120,7 +120,7 @@ void Buffer::setBit(int x, int y, Color color) {
 Color Buffer::getBit(int x, int y) {
 
 	// Check input variables
-	if (x > _width || x < 0 || y > _height || y < 0)
+	if (x >= _width || x < 0 || y >= _height || y < 0)
 		return _color;
 
 	// Get byte that contains the bit
@@ -137,7 +137,7 @@ void Buffer::set8Bit(int x, int y, uint8_t data) {
 	uint8_t bits1(data), bits2(data);
 
 	// Return if non-existent row
-	if (y > _height || y < 0)
+	if (y >= _height || y < 0)
 		return;
 
 	// Special case for negative x-index
@@ -215,7 +215,7 @@ uint8_t Buffer::get8Bit(int x, int y) {
 	uint8_t bits1(0), bits2(0);
 
 	// Return if non-existent row
-	if (y > _height || y < 0)
+	if (y >= _height || y < 0)
 		return (_color == BLACK) ? 0xFF : 0x00;
 
 	// Special case for negative x-index
