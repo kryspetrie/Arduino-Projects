@@ -24,7 +24,6 @@ namespace Display {
 #define _SF_PUNC2			/* :;<=>?@ */
 #define _SF_PUNC3			/* [\]^_` */
 #define _SF_PUNC4			/* {|}~ */
-//#define _SF_COMMON		/* : /.,'?!- */
 
 class SimpleFont: public Font {
 public:
