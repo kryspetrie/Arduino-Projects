@@ -20,13 +20,13 @@ void test_SimpleFont_writeString_2() {
 	Color colorB(WHITE);
 	sFont.setColor(colorB);
 
-	for (int yInd = 0; yInd < 11; yInd++) {
+	for (int yInd = -6; yInd < 11; yInd++) {
 		dispBuff.clear(colorA);
 		sFont.drawString(1, yInd, "ABC-123-/|\\");
 		dispBuff.printSerial('@', '.');
 		Serial.println("");
 
-		delay(1000);
+		delay(750);
 	}
 }
 
