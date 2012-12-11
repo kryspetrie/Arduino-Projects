@@ -9,7 +9,7 @@ SimpleFont.d SimpleFont.o: ../SimpleFont.cpp ../SimpleFont.h ../Font.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/Printable.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/new.h \
   C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h \
-  ../Buffer.h ../Common.h
+  ../Buffer.h ../Common.h ../SimpleFont_data.h
 
 ../SimpleFont.h:
 
@@ -38,3 +38,5 @@ C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h:
 ../Buffer.h:
 
 ../Common.h:
+
+../SimpleFont_data.h:

@@ -19,7 +19,7 @@ namespace Display {
  */
 #define _SF_DIGIT 			/* 0123456789 */
 #define _SF_ALPHA			/* ABCDEFGHIJKLMNOPQRSTUVWXYZ  normal */
-//#define _SF_ALPHA_BOLD	/* ABCDEFGHIJKLMNOPQRSTUVWXYZ  bold */
+#define _SF_ALPHA_BOLD		/* ABCDEFGHIJKLMNOPQRSTUVWXYZ  bold */
 #define _SF_PUNC1			/*  !"#$%&'()*+,-./ */
 #define _SF_PUNC2			/* :;<=>?@ */
 #define _SF_PUNC3			/* [\]^_` */
