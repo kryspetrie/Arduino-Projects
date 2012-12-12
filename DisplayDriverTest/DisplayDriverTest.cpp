@@ -15,6 +15,52 @@ uint8_t rawDispBuff[BUFF_LEN];
 Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
+void test_StructUnion() {
+	// http://stackoverflow.com/questions/12940211/arrays-unions-structs-containing-bit-fields-c
+
+	// define union
+	typedef union {
+		uint8_t raw;
+
+		struct {
+			byte red : 3;
+			byte green : 3;
+			byte blue : 2;
+		};
+	} Pixel;
+
+	// define array
+	static const int cArrLen(5);
+	Pixel pixArray[cArrLen];
+
+	// clear array
+	for (int i = 0; i < cArrLen; i++)
+		pixArray[i].raw = 0x0;
+
+	// Set the first pixel (will truncate)
+	pixArray[0].red = 0xFF;
+	pixArray[0].green = 0xFF;
+	pixArray[0].blue = 0xFF;
+
+	// Print out what was set;
+	Serial.println("red: " + String(pixArray[0].red, BIN));
+	Serial.println("green: " + String(pixArray[0].green, BIN));
+	Serial.println("blue: " + String(pixArray[0].blue, BIN));
+
+	while(1);
+}
+
+
+void setup() {
+	Serial.begin(9600);
+}
+
+void loop() {
+	test_StructUnion();
+}
+
+#ifdef TESTCODE
+
 void test_SimpleFont_writeString_2() {
 	Color colorA(BLACK);
 	Color colorB(WHITE);
@@ -29,16 +75,6 @@ void test_SimpleFont_writeString_2() {
 		delay(750);
 	}
 }
-
-void setup() {
-	Serial.begin(9600);
-}
-
-void loop() {
-	test_SimpleFont_writeString_2();
-}
-
-#ifdef TESTCODE
 
 void test_SimpleFont_writeString() {
 	Color colorA(BLACK);
