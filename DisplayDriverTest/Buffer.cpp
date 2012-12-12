@@ -8,6 +8,21 @@
 #include "Buffer.h"
 using namespace Display;
 
+Rect::Rect() :
+		x0(0), y0(0), width(1), height(1) {
+}
+
+Rect::Rect(int x0_, int y0_, int width_, int height_) :
+		x0(x0_), y0(y0_), width(width_), height(height_) {
+}
+
+void Rect::set(int x0_, int y0_, int width_, int height_) {
+	x0 = x0_;
+	y0 = y0_;
+	width = width_;
+	height = height_;
+}
+
 /**
  * Creates a buffer object with a certain width/height, using the
  *  provided buffer.  The provided buffer MUST BE equal to at least
@@ -24,6 +39,9 @@ Buffer::Buffer(const int width, const int height, const int pitchBytes, uint8_t*
 	clear(_color);
 }
 
+Buffer::~Buffer() {
+}
+
 void Buffer::clear() {
 	clear(_color);
 }
@@ -34,16 +52,20 @@ void Buffer::clear(Color color) {
 		fastHLine(0, y, _width, color);
 }
 
-void Buffer::clearRect(int x, int y, int width, int height) {
-	clearRect(x, y, width, height, _color);
+void Buffer::clearRect(Rect& rect) {
+	clearRect(rect, _color);
 }
 
-void Buffer::clearRect(int x, int y, int width, int height, Color color) {
-	int lastRow = y + height;
+void Buffer::clearRect(Rect& rect, Color color) {
+	int lastRow = rect.y0 + rect.height;
 
 	// Note: fastHLine will handle input error conditions
-	for (int row = y; row < lastRow; row++)
-		fastHLine(x, row, width, color);
+	for (int row = rect.y0; row < lastRow; row++)
+		fastHLine(rect.x0, row, rect.width, color);
+}
+
+void Buffer::clearRaw() {
+	clearRaw(_color);
 }
 
 void Buffer::clearRaw(Color color) {

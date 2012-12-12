@@ -15,6 +15,34 @@ uint8_t rawDispBuff[BUFF_LEN];
 Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
+
+void test_SimpleFont_writeString_2() {
+	Color colorA(BLACK);
+	Color colorB(WHITE);
+	sFont.setColor(colorB);
+
+	for (int yInd = -6; yInd < 11; yInd++) {
+		dispBuff.clear(colorA);
+		sFont.drawString(1, yInd, "ABC-123-/|\\");
+		dispBuff.printSerial('@', '.');
+		Serial.println("");
+
+		delay(750);
+	}
+}
+
+void setup() {
+	Serial.begin(9600);
+}
+
+void loop() {
+	test_SimpleFont_writeString_2();
+}
+
+#ifdef TESTCODE
+
+
+
 void test_StructUnion() {
 	// http://stackoverflow.com/questions/12940211/arrays-unions-structs-containing-bit-fields-c
 
@@ -48,32 +76,6 @@ void test_StructUnion() {
 	Serial.println("blue: " + String(pixArray[0].blue, BIN));
 
 	while(1);
-}
-
-
-void setup() {
-	Serial.begin(9600);
-}
-
-void loop() {
-	test_StructUnion();
-}
-
-#ifdef TESTCODE
-
-void test_SimpleFont_writeString_2() {
-	Color colorA(BLACK);
-	Color colorB(WHITE);
-	sFont.setColor(colorB);
-
-	for (int yInd = -6; yInd < 11; yInd++) {
-		dispBuff.clear(colorA);
-		sFont.drawString(1, yInd, "ABC-123-/|\\");
-		dispBuff.printSerial('@', '.');
-		Serial.println("");
-
-		delay(750);
-	}
 }
 
 void test_SimpleFont_writeString() {
