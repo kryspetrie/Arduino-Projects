@@ -1,4 +1,4 @@
-Buffer.d Buffer.o: ../Buffer.cpp ../Buffer.h \
+Buffer.d Buffer.o: ../Buffer.cpp ../Buffer.h ../Common.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/Arduino.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/binary.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/WCharacter.h \
@@ -8,10 +8,11 @@ Buffer.d Buffer.o: ../Buffer.cpp ../Buffer.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/Print.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/Printable.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/new.h \
-  C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h \
-  ../Common.h
+  C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h
 
 ../Buffer.h:
+
+../Common.h:
 
 C:\dev\arduino\ide\hardware\arduino\cores\arduino/Arduino.h:
 
@@ -32,5 +33,3 @@ C:\dev\arduino\ide\hardware\arduino\cores\arduino/Printable.h:
 C:\dev\arduino\ide\hardware\arduino\cores\arduino/new.h:
 
 C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h:
-
-../Common.h:

@@ -5,6 +5,8 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Buffer.cpp \
+../Buffer2D.cpp \
+../ChildBuffer2D.cpp \
 ../DisplayDriverTest.cpp \
 ../Font.cpp \
 ../LedDisplay.cpp \
@@ -12,6 +14,8 @@ CPP_SRCS += \
 
 OBJS += \
 ./Buffer.o \
+./Buffer2D.o \
+./ChildBuffer2D.o \
 ./DisplayDriverTest.o \
 ./Font.o \
 ./LedDisplay.o \
@@ -19,6 +23,8 @@ OBJS += \
 
 CPP_DEPS += \
 ./Buffer.d \
+./Buffer2D.d \
+./ChildBuffer2D.d \
 ./DisplayDriverTest.d \
 ./Font.d \
 ./LedDisplay.d \

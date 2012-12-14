@@ -1,5 +1,5 @@
 #include "DisplayDriverTest.h"
-#include "Buffer.h"
+#include "Buffer2D.h"
 #include "SimpleFont.h"
 
 using namespace Display;
@@ -12,7 +12,7 @@ const int BUFF_LEN = WD_BYTES * HT_PX;
 
 // Create LED display object
 uint8_t rawDispBuff[BUFF_LEN];
-Buffer dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
+Buffer2D dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
 
