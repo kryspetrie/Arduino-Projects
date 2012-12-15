@@ -119,8 +119,12 @@ Color Buffer2D::getBit(int x, int y) {
 }
 
 void Buffer2D::set8Bit(int x, int y, uint8_t data) {
+	set8Bit(x, y, data, 0xFF);
+}
 
-	uint8_t bits1(data), bits2(data);
+void Buffer2D::set8Bit(int x, int y, uint8_t data, uint8_t mask) {
+
+	uint8_t bits1(data & mask), bits2(data & mask);
 
 	// Return if non-existent row
 	if (y >= _height || y < 0)
@@ -137,7 +141,7 @@ void Buffer2D::set8Bit(int x, int y, uint8_t data) {
 			uint8_t* firstBitsInRow = _buff + (y * _pitchBytes);
 
 			// Clear the bits to set
-			*firstBitsInRow &= (0xFF >> bitsInBuffer);
+			*firstBitsInRow &= (~(mask << (8 - bitsInBuffer)));
 
 			// Shift the data bits to the proper position
 			bits1 <<= (8 - bitsInBuffer);
@@ -157,7 +161,7 @@ void Buffer2D::set8Bit(int x, int y, uint8_t data) {
 	uint8_t lastByteIndex = _pitchBytes - 1;
 
 	// Calculate the mask for bits beyond display width
-	uint8_t maskBits = 0xFF << (8 - _width % 8);
+	uint8_t maskBits = 0xFF << (-_width % 8);
 
 	// Get byte that will contain the most significant part of the 8 bits
 	uint8_t* bitsByte1 = _buff + (_pitchBytes * y) + byteIndex;
@@ -170,7 +174,7 @@ void Buffer2D::set8Bit(int x, int y, uint8_t data) {
 		bits1 &= maskBits;
 
 	// Clear the bits to set
-	*bitsByte1 &= (0xFF << (8 - byteRem));
+	*bitsByte1 &= ~(mask >> byteRem);
 
 	// Set the first byte containing some of the 8 bits
 	*bitsByte1 |= bits1;
@@ -189,7 +193,7 @@ void Buffer2D::set8Bit(int x, int y, uint8_t data) {
 			bits2 &= maskBits;
 
 		// Clear the bits to set
-		*bitsByte2 &= (0xFF >> byteRem);
+		*bitsByte2 &= (~(mask << (8 - byteRem)));
 
 		// Set the second byte containing the rest of the 8 bits
 		*bitsByte2 |= bits2;
@@ -202,7 +206,7 @@ uint8_t Buffer2D::get8Bit(int x, int y) {
 
 	// Return if non-existent row
 	if (y >= _height || y < 0)
-		return (_color == BLACK) ? 0xFF : 0x00;
+		return (_color == BLACK) ? BLACKBYTE : WHITEBYTE;
 
 	// Special case for negative x-index
 	if (x < 0) {

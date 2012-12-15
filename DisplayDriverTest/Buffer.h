@@ -36,6 +36,7 @@ public:
 
 	// 8-bit operations
 	virtual void set8Bit(int x, int y, uint8_t data) = 0;
+	virtual void set8Bit(int x, int y, uint8_t data, uint8_t mask) = 0;
 	virtual uint8_t get8Bit(int x, int y) = 0;
 
 	// Getters

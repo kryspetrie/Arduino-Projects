@@ -34,6 +34,10 @@ public:
 	int width, height;
 };
 
+
+const uint8_t BLACKBYTE = 0xFF;
+const uint8_t WHITEBYTE = 0x00;
+
 enum Color {
 	BLACK = 0, WHITE = 1
 };

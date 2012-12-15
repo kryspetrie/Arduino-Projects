@@ -19,23 +19,43 @@ SimpleFont::SimpleFont(Buffer* buff) :
 SimpleFont::~SimpleFont() {}
 
 void SimpleFont::drawChar(int x, int y, char c) {
-	uint32_t bitmap;
-	bitmap = getBitmap(c);
 
-	// Loop across the height
-	for (int h = _height - 1; h >= 0; h--) {
+	// Get the character bitmap
+	uint32_t bitmap = getBitmap(c);
 
-		// loop across the width
-		for (int w = _width - 1; w >= 0; w--) {
+	// Set the color of the bitmap
+	if (_color == BLACK)
+		bitmap = ~bitmap;
 
-			// Set only bits that are 1's
-			if (bitmap & 0x01)
-				_buff->setBit(x + w, y + h, _color);
+	// Loop over the rows
+	for (char y1 = y + _height - 1; y1 >= y; y1--) {
 
-			// Shift out a bit
-			bitmap >>= 1;
-		}
+		// Get the row
+		uint8_t curRow = (bitmap & 0x0f) << 4;
+
+		// Draw the row
+		_buff->set8Bit(x, y1, curRow, 0xf0);
+
+		// Shift the bitmap
+		bitmap >>= 4;
 	}
+
+//	// Generic version
+//
+//	// Loop across the height
+//	for (int h = _height - 1; h >= 0; h--) {
+//
+//		// loop across the width
+//		for (int w = _width - 1; w >= 0; w--) {
+//
+//			// Set only bits that are 1's
+//			if (bitmap & 0x01)
+//				_buff->setBit(x + w, y + h, _color);
+//
+//			// Shift out a bit
+//			bitmap >>= 1;
+//		}
+//	}
 }
 
 void SimpleFont::drawString(int x, int y, const char* string) {

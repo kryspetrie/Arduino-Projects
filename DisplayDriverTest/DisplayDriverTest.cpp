@@ -5,8 +5,8 @@
 using namespace Display;
 
 // Set LED display parameters
-const int WD_PX = 100; //20;
-const int HT_PX = 10;
+const int WD_PX = 100;
+const int HT_PX = 12;
 const int WD_BYTES = (WD_PX + 7) / 8;
 const int BUFF_LEN = WD_BYTES * HT_PX;
 
@@ -15,6 +15,50 @@ uint8_t rawDispBuff[BUFF_LEN];
 Buffer2D dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
+void test_SimpleFont_writeString() {
+	Color colorA(BLACK);
+	Color colorB(WHITE);
+
+	FontStyle styleA(NOSTYLE);
+	FontStyle styleB(BOLD);
+
+	while (true) {
+
+		sFont.setStyle(styleA);
+
+		for (char i = 0; i < 2; i++) {
+
+			dispBuff.clear(colorA);
+			sFont.setColor(colorB);
+			sFont.drawString(0, 0, "Petrie <3");
+			sFont.drawString(0, 6, "is awesome");
+			dispBuff.printSerial('@', '.');
+			Serial.println("");
+
+			// swap colors
+			Color tmpColor(colorA);
+			colorA = colorB;
+			colorB = tmpColor;
+
+			delay(1000);
+		}
+
+		// swap styles
+		FontStyle tmpStyle(styleA);
+		styleA = styleB;
+		styleB = tmpStyle;
+	}
+}
+
+void setup() {
+	Serial.begin(9600);
+}
+
+void loop() {
+	test_SimpleFont_writeString();
+}
+
+#ifdef TESTCODE
 
 void test_SimpleFont_writeString_2() {
 	Color colorA(BLACK);
@@ -31,17 +75,65 @@ void test_SimpleFont_writeString_2() {
 	}
 }
 
-void setup() {
-	Serial.begin(9600);
+void test_Buffer_set8Bit() {
+
+	Color colorA(WHITE);
+	Color colorB(BLACK);
+
+	while (true) {
+
+		// Loop over byte-alignment
+		for (int bAlign = 0; bAlign < 8; bAlign++) {
+
+			// Loop over the height
+			for (int h = 0; h < 1 /*dispBuff.getHeight()*/; h++) {
+
+				// Loop across the bytes
+				for (int w = bAlign; w < dispBuff.getWidth(); w += 8) {
+
+					// Set buffer the first color
+					dispBuff.clear(colorA);
+
+					// Print current parameters
+					String outString = "Set x:" + String(w) + ", y: "
+					+ String(h) + ", byteAlign: " + String(bAlign);
+					Serial.println(outString);
+
+					// Modify the buffer
+					dispBuff.set8Bit(w, h, 0x81, 0xc3);
+
+					// Print out the buffer
+					dispBuff.printSerial('X', '.');
+					Serial.println("");
+
+					// Delay between iterations
+					delay(750);
+				}
+			}
+		}
+
+		// Swap colors
+		Color tmp = colorA;
+		colorA = colorB;
+		colorB = tmp;
+	}
 }
 
-void loop() {
-	test_SimpleFont_writeString_2();
+void test_Buffer_set8Bit_neg() {
+	dispBuff.clear(BLACK);
+
+	// test some key values
+	dispBuff.set8Bit(0, -1, 0xFF);
+	dispBuff.set8Bit(0, dispBuff.getHeight() + 1, 0xFF);
+	dispBuff.set8Bit(-8, 0, 0xFF);
+	dispBuff.set8Bit(-7, 1, 0xFF);
+	dispBuff.set8Bit(-3, 2, 0xFF);
+	dispBuff.set8Bit(-1, 3, 0XFF);
+
+	dispBuff.printSerial('1', '0');
+	Serial.println("");
+	delay(5000);
 }
-
-#ifdef TESTCODE
-
-
 
 void test_StructUnion() {
 	// http://stackoverflow.com/questions/12940211/arrays-unions-structs-containing-bit-fields-c
@@ -76,26 +168,6 @@ void test_StructUnion() {
 	Serial.println("blue: " + String(pixArray[0].blue, BIN));
 
 	while(1);
-}
-
-void test_SimpleFont_writeString() {
-	Color colorA(BLACK);
-	Color colorB(WHITE);
-
-	while (true) {
-		dispBuff.clear(colorA);
-		sFont.setColor(colorB);
-		sFont.drawString(0, 0, "ASDF_string");
-		sFont.drawString(0, 5, "Lolol@#$%&");
-		dispBuff.printSerial('@', '.');
-
-		// swap colors
-		Color tmp(colorA);
-		colorA = colorB;
-		colorB = tmp;
-
-		delay(1000);
-	}
 }
 
 void test_SimpleFont_writeChar_all() {
@@ -199,22 +271,6 @@ void test_Buffer_fastHLine() {
 		color = !color;
 		delay(5000);
 	}
-}
-
-void test_Buffer_set8Bit_neg() {
-	dispBuff.clear(false);
-
-	// test some key values
-	dispBuff.set8Bit(0, -1, 0xFF);
-	dispBuff.set8Bit(0, dispBuff.getHeight() + 1, 0xFF);
-	dispBuff.set8Bit(-8, 0, 0xFF);
-	dispBuff.set8Bit(-7, 1, 0xFF);
-	dispBuff.set8Bit(-3, 2, 0xFF);
-	dispBuff.set8Bit(-1, 3, 0XFF);
-
-	dispBuff.printSerial('1', '0');
-	Serial.println("");
-	delay(5000);
 }
 
 void test_Buffer_get8Bit_neg() {

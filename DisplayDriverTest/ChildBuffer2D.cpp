@@ -58,6 +58,10 @@ Color ChildBuffer2D::getBit(int x, int y) {
 }
 
 void ChildBuffer2D::set8Bit(int x, int y, uint8_t data) {
+	set8Bit(x, y, data, 0xFF);
+}
+
+void ChildBuffer2D::set8Bit(int x, int y, uint8_t data, uint8_t mask) {
 	//TODO finish this
 }
 
@@ -68,11 +72,11 @@ uint8_t ChildBuffer2D::get8Bit(int x, int y) {
 
 
 int ChildBuffer2D::getWidth() {
-	return _window.width();
+	return _window.width;
 }
 
 int ChildBuffer2D::getHeight() {
-	return _window.height();
+	return _window.height;
 }
 
 bool ChildBuffer2D::outOfBounds(int x, int y) {

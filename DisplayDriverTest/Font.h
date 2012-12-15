@@ -50,8 +50,6 @@ protected:
 	uint8_t _kerning;
 	Color _color;
 	FontStyle _style;
-
-private:
 };
 
 } /* namespace Led */
