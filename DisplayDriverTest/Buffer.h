@@ -43,8 +43,10 @@ public:
 	virtual int getWidth() = 0;
 	virtual int getHeight() = 0;
 
+	// Line operations
+	virtual void fastHLine(int x, int y, int width, Color color) = 0;
+
 protected:
-	virtual void _fastHLine(int x, int y, int width, Color color) = 0;
 	virtual void _printSerial(char ones, char zeros);
 };
 

@@ -1,5 +1,6 @@
 #include "DisplayDriverTest.h"
 #include "Buffer2D.h"
+#include "ChildBuffer2D.h"
 #include "SimpleFont.h"
 
 using namespace Display;
@@ -15,6 +16,38 @@ uint8_t rawDispBuff[BUFF_LEN];
 Buffer2D dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
 SimpleFont sFont(&dispBuff);
 
+void test_ChildBuffer2D_clearRect() {
+	dispBuff.clear(BLACK);
+
+	// Create a child buffer and clear it
+	Serial.println("Test ChildBuff clear");
+	ChildBuffer2D childBuff(Rect(5, 5, 6, 6), dispBuff);
+	childBuff.clear(WHITE);
+
+	dispBuff.printSerial('X','.');
+	Serial.println("");
+	childBuff.printSerial('X', '.');
+	Serial.println("");
+
+	Serial.println("Test ChildBuff drawChar");
+	sFont.setColor(BLACK);
+	sFont.drawChar(1, 1, 'X');
+	childBuff.printSerial('X', '.');
+	Serial.println("");
+	dispBuff.printSerial('X', '.');
+	Serial.println("");
+	delay(5000);
+}
+
+void setup() {
+	Serial.begin(9600);
+}
+
+void loop() {
+	test_ChildBuffer2D_clearRect();
+}
+
+#ifdef TESTCODE
 void test_SimpleFont_writeString() {
 	Color colorA(BLACK);
 	Color colorB(WHITE);
@@ -49,16 +82,6 @@ void test_SimpleFont_writeString() {
 		styleB = tmpStyle;
 	}
 }
-
-void setup() {
-	Serial.begin(9600);
-}
-
-void loop() {
-	test_SimpleFont_writeString();
-}
-
-#ifdef TESTCODE
 
 void test_SimpleFont_writeString_2() {
 	Color colorA(BLACK);

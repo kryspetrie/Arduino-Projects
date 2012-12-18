@@ -11,7 +11,8 @@ DisplayDriverTest.d DisplayDriverTest.o: ../DisplayDriverTest.cpp \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/new.h \
   C:\dev\arduino\ide\hardware\arduino\variants\standard/pins_arduino.h \
   C:\dev\arduino\ide\hardware\arduino\cores\arduino/HardwareSerial.h \
-  ../Buffer2D.h ../Common.h ../Buffer.h ../SimpleFont.h ../Font.h
+  ../Buffer2D.h ../Common.h ../Buffer.h ../ChildBuffer2D.h \
+  ../SimpleFont.h ../Font.h
 
 ../DisplayDriverTest.h:
 
@@ -42,6 +43,8 @@ C:\dev\arduino\ide\hardware\arduino\cores\arduino/HardwareSerial.h:
 ../Common.h:
 
 ../Buffer.h:
+
+../ChildBuffer2D.h:
 
 ../SimpleFont.h:
 

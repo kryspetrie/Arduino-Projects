@@ -48,6 +48,9 @@ public:
 	virtual int getWidth();
 	virtual int getHeight();
 
+	// Line operations
+	void fastHLine(int x, int y, int width, Color color);
+
 	// Buffer2D Specific Functions
 	/////////////////////////////////////////////////////////////////
 
@@ -65,7 +68,6 @@ public:
 	virtual int getSize();
 
 protected:
-	void _fastHLine(int x, int y, int width, Color color);
 	void memsetColor(uint8_t* buff, Color color, size_t bytes);
 
 private:

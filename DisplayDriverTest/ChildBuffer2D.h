@@ -25,6 +25,10 @@ public:
 	virtual void clear(Color color);
 	virtual void printSerial(char ones, char zeros);
 
+	// Wrap Parent Buffer clear color
+	virtual void setColor(Color color);
+	virtual Color getColor();
+
 	// Wrap Shape operations
 	virtual void clearRect(Rect& rect);
 	virtual void clearRect(Rect& rect, Color color);
@@ -42,13 +46,19 @@ public:
 	virtual int getWidth();
 	virtual int getHeight();
 
+	// Line operations
+	virtual void fastHLine(int x, int y, int width, Color color);
+
 protected:
 	ChildBuffer2D();
 	Buffer* _parentBuff;
 	Rect _window;
 
 private:
-	bool outOfBounds(int x, int y);
+	bool _outOfBounds(int x, int y);
+	bool _outOfBounds8Bit(int x, int y);
+	uint8_t _createMask8Bit(int x);
+	bool _constrainRect(Rect& r);
 };
 
 } /* namespace Display */

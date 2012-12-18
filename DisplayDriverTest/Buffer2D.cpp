@@ -34,7 +34,7 @@ void Buffer2D::clear() {
 void Buffer2D::clear(Color color) {
 
 	for (int y = 0; y < _height; y++)
-		_fastHLine(0, y, _width, color);
+		fastHLine(0, y, _width, color);
 }
 
 void Buffer2D::clearRect(Rect& rect) {
@@ -46,7 +46,7 @@ void Buffer2D::clearRect(Rect& rect, Color color) {
 
 	// Note: fastHLine will handle input error conditions
 	for (int row = rect.y0; row < lastRow; row++)
-		_fastHLine(rect.x0, row, rect.width, color);
+		fastHLine(rect.x0, row, rect.width, color);
 }
 
 void Buffer2D::clearRaw() {
@@ -269,7 +269,7 @@ uint8_t Buffer2D::get8Bit(int x, int y) {
 	return bits1 | bits2;
 }
 
-void Buffer2D::_fastHLine(int x, int y, int width, Color color) {
+void Buffer2D::fastHLine(int x, int y, int width, Color color) {
 
 	// Handle out-of-bounds X
 	if (x > _width)
@@ -283,7 +283,7 @@ void Buffer2D::_fastHLine(int x, int y, int width, Color color) {
 	if (width == 0)
 		return;
 
-	// Handle negative width
+	// Fix negative width
 	if (width < 0) {
 		width = abs(width);
 		x -= width;
@@ -295,11 +295,11 @@ void Buffer2D::_fastHLine(int x, int y, int width, Color color) {
 			return;
 
 		// Realign at zero
-		width = x + width;
+		width += x;
 		x = 0;
 	}
 
-	// Handle out-of-bounds width
+	// Fix out-of-bounds width
 	if (x + width > _width)
 		width = _width - x;
 
