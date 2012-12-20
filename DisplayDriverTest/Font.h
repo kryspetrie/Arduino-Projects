@@ -22,7 +22,7 @@ enum FontStyle {
 
 class Font {
 public:
-	Font(Buffer* buff);
+	Font(Buffer& buff);
 	virtual ~Font();
 
 	// Pure Virtual

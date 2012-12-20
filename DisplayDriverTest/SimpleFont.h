@@ -27,7 +27,7 @@ namespace Display {
 
 class SimpleFont: public Font {
 public:
-	SimpleFont(Buffer* buff);
+	SimpleFont(Buffer& buff);
 	virtual ~SimpleFont();
 
 	// Implementations

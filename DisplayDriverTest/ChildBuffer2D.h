@@ -14,7 +14,7 @@ namespace Display {
 
 class ChildBuffer2D: public Buffer {
 public:
-	ChildBuffer2D(Rect window, Buffer &buffer);
+	ChildBuffer2D(Rect& window, Buffer& buffer);
 	virtual ~ChildBuffer2D();
 
 	// Interface Functions
@@ -49,10 +49,14 @@ public:
 	// Line operations
 	virtual void fastHLine(int x, int y, int width, Color color);
 
+	// Child Buffer Specific Functions
+	/////////////////////////////////////////////////////////////////
+	virtual void setWindow(Rect& window);
+
 protected:
 	ChildBuffer2D();
 	Buffer* _parentBuff;
-	Rect _window;
+	Rect* _window;
 
 private:
 	bool _outOfBounds(int x, int y);

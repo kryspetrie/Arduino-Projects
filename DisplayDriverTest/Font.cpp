@@ -8,7 +8,7 @@
 #include "Font.h"
 using namespace Display;
 
-Font::Font(Buffer* buff) : _buff(buff), _spacing(0), _kerning(0), _color(WHITE), _style(NOSTYLE){}
+Font::Font(Buffer& buff) : _buff(&buff), _spacing(0), _kerning(0), _color(WHITE), _style(NOSTYLE){}
 
 Font::~Font() {}
 

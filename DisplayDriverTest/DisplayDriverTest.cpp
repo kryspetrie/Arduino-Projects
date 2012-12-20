@@ -14,28 +14,31 @@ const int BUFF_LEN = WD_BYTES * HT_PX;
 // Create LED display object
 uint8_t rawDispBuff[BUFF_LEN];
 Buffer2D dispBuff(WD_PX, HT_PX, WD_BYTES, rawDispBuff);
-SimpleFont sFont(&dispBuff);
+SimpleFont sFont(dispBuff);
+
+
+
+Rect rect1(10, 1, 4, 6);
+//Rect rect2(4, 4, 3, 5);
+ChildBuffer2D childBuff(rect1, dispBuff);
 
 void test_ChildBuffer2D_clearRect() {
 	dispBuff.clear(BLACK);
+	sFont.setColor(WHITE);
+	sFont.drawChar(2, 2, 'X');
 
-	// Create a child buffer and clear it
-	Serial.println("Test ChildBuff clear");
-	ChildBuffer2D childBuff(Rect(5, 5, 6, 6), dispBuff);
+	// Clear rect1
+	//childBuff.setWindow(rect1);
 	childBuff.clear(WHITE);
 
+	// Clear rect2
+	//childBuff.setWindow(rect2);
+	//childBuff.clear(WHITE);
+
+	// Print out the full buffer
 	dispBuff.printSerial('X','.');
 	Serial.println("");
-	childBuff.printSerial('X', '.');
-	Serial.println("");
 
-	Serial.println("Test ChildBuff drawChar");
-	sFont.setColor(BLACK);
-	sFont.drawChar(1, 1, 'X');
-	childBuff.printSerial('X', '.');
-	Serial.println("");
-	dispBuff.printSerial('X', '.');
-	Serial.println("");
 	delay(5000);
 }
 
@@ -48,6 +51,24 @@ void loop() {
 }
 
 #ifdef TESTCODE
+
+void test_ChildBuffer2D_drawChar() {
+
+	ChildBuffer2D childBuff(Rect(5, 5, 6, 6), dispBuff);
+
+	// Create a child font that is white
+	SimpleFont cFont(&childBuff);
+	cFont.setColor(WHITE);
+
+	// Draw an X in the child buffer
+	cFont.drawChar(1, 1, 'X');
+
+	// Print the full buffer
+	dispBuff.printSerial('X', '.');
+	Serial.println("");
+	delay(5000);
+}
+
 void test_SimpleFont_writeString() {
 	Color colorA(BLACK);
 	Color colorB(WHITE);

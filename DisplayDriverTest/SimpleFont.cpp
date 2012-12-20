@@ -10,7 +10,7 @@
 
 using namespace Display;
 
-SimpleFont::SimpleFont(Buffer* buff) :
+SimpleFont::SimpleFont(Buffer& buff) :
 		Font(buff) {
 	_spacing = _height + 1;
 	_kerning = 2;
